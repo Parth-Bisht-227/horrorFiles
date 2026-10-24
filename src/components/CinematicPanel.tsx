@@ -183,48 +183,82 @@ export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, 
 interface NarrativeTextProps {
   lines: string[];
   onComplete?: () => void;
+  continueText?: string;
   autoAdvance?: boolean;
   advanceDelay?: number;
 }
 
 /**
- * Narrative text block that reveals lines sequentially with fade-in animation.
+ * Narrative text block that reveals lines sequentially.
+ * Pacing rule: Player stays in full control. The scene NEVER forces advancement
+ * unless explicitly requested. A clear Continue action is displayed when ready.
  */
 export const NarrativeText: React.FC<NarrativeTextProps> = ({
   lines,
   onComplete,
+  continueText = 'Continue Investigation →',
   autoAdvance = false,
   advanceDelay = 3000,
 }) => {
-  const [visibleCount, setVisibleCount] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
 
+  // Reveal next line gradually or allow fast-forward on click
   useEffect(() => {
     if (visibleCount >= lines.length) {
-      if (onComplete) {
+      if (autoAdvance && onComplete) {
         const timer = setTimeout(onComplete, advanceDelay);
         return () => clearTimeout(timer);
       }
       return;
     }
 
-    const timer = setTimeout(
-      () => setVisibleCount((c) => c + 1),
-      visibleCount === 0 ? 500 : 1800
-    );
+    const timer = setTimeout(() => {
+      setVisibleCount(c => Math.min(lines.length, c + 1));
+    }, 1200);
+
     return () => clearTimeout(timer);
   }, [visibleCount, lines.length, onComplete, advanceDelay, autoAdvance]);
 
+  // Handle player clicking anywhere on narrative box to reveal all or continue
+  const handleBoxClick = () => {
+    if (visibleCount < lines.length) {
+      setVisibleCount(lines.length);
+    }
+  };
+
+  const isAllVisible = visibleCount >= lines.length;
+
   return (
-    <div className="narrative-text">
-      {lines.slice(0, visibleCount).map((line, i) => (
-        <p
-          key={i}
-          className="narrative-line"
-          style={{ animationDelay: `${i * 0.2}s` }}
-        >
-          {line}
-        </p>
-      ))}
+    <div className="narrative-text" onClick={handleBoxClick}>
+      <div className="narrative-lines">
+        {lines.slice(0, visibleCount).map((line, i) => (
+          <p
+            key={i}
+            className="narrative-line"
+            style={{ animationDelay: `${i * 0.15}s` }}
+          >
+            {line}
+          </p>
+        ))}
+      </div>
+
+      {isAllVisible && onComplete && (
+        <div className="narrative-action-bar">
+          <button
+            className="continue-btn narrative-continue-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onComplete();
+            }}
+          >
+            <span>{continueText}</span>
+          </button>
+        </div>
+      )}
+
+      {!isAllVisible && (
+        <span className="narrative-tap-hint">Click to reveal faster •••</span>
+      )}
     </div>
   );
 };

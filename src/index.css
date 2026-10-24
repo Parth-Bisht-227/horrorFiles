@@ -150,10 +150,15 @@ html, body {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
   padding: 28px;
   animation: panelContentFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.panel-content > * {
+  margin: auto;
 }
 
 @keyframes panelContentFade {
@@ -832,6 +837,16 @@ html, body {
   text-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
 }
 
+.cipher-pair {
+  margin: 6px 0;
+}
+
+.cipher-divider-line {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 10px 0;
+}
+
 .cipher-hint {
   padding: 10px 16px;
   background: rgba(245, 158, 11, 0.1);
@@ -1335,6 +1350,224 @@ html, body {
   background: rgba(245, 158, 11, 0.2);
   border-color: var(--gold-400);
   transform: scale(1.05);
+}
+
+/* ─── Narrative Action Bar & Pacing Controls ──────────── */
+
+.narrative-action-bar {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.narrative-continue-btn {
+  animation: narrativeBtnPulse 2s infinite ease-in-out;
+}
+
+@keyframes narrativeBtnPulse {
+  0%, 100% { box-shadow: 0 0 15px var(--gold-glow); }
+  50% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.6); }
+}
+
+.narrative-tap-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 10px;
+  cursor: pointer;
+  letter-spacing: 0.8px;
+}
+
+/* ─── Audio Playback Deck Controls ────────────────────── */
+
+.audio-playback-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.playback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 30px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.playback-btn.play-btn {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--azure-400);
+  color: #fff;
+  box-shadow: 0 0 15px var(--azure-glow);
+}
+
+.playback-btn.play-btn:hover {
+  background: var(--azure-400);
+  color: #050811;
+  box-shadow: 0 0 25px var(--azure-glow);
+}
+
+.playback-btn.pause-btn {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid var(--crimson-500);
+  color: #fca5a5;
+  box-shadow: 0 0 15px var(--crimson-glow);
+}
+
+.playback-btn.threat-play-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--crimson-500);
+  color: #fff;
+  box-shadow: 0 0 20px var(--crimson-glow);
+}
+
+.continue-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.rec-dot.active {
+  animation: recPulse 0.6s infinite alternate;
+}
+
+.waveform-bar.idle {
+  height: 6px !important;
+  opacity: 0.3;
+  animation: none !important;
+}
+
+/* ─── Scramble & Evidence Dossiers ────────────────────── */
+
+.tile-check-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #4ade80;
+  background: rgba(0, 0, 0, 0.7);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scramble-evidence-dossier,
+.cipher-evidence-dossier,
+.blueprint-evidence-dossier {
+  margin-top: 22px;
+  width: 100%;
+  background: rgba(14, 23, 42, 0.95);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: 0 0 35px var(--gold-glow);
+  animation: evidenceSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes evidenceSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.evidence-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.evidence-stamp {
+  font-family: monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #4ade80;
+  padding: 3px 8px;
+  border: 1.5px solid #4ade80;
+  border-radius: 4px;
+}
+
+.evidence-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.evidence-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--text-sub);
+}
+
+.evidence-item.highlight {
+  color: var(--gold-300);
+  background: rgba(245, 158, 11, 0.1);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--gold-400);
+}
+
+.evidence-narrative {
+  margin-bottom: 18px;
+}
+
+.evidence-narrative p {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+}
+
+.auto-solve-btn {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: var(--gold-400) !important;
+  color: var(--gold-300) !important;
+}
+
+/* ─── Blueprint SVG Comparator ────────────────────────── */
+
+.blueprint-svg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.blueprint-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.found-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ef4444;
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-shadow: 0 0 10px var(--crimson-glow);
 }
 
 /* ─── Responsive Queries ──────────────────────────────── */
