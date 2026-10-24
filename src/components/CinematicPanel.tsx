@@ -137,31 +137,6 @@ interface SubtitleBarProps {
  * Cinematic subtitle bar — appears at bottom with speaker name and dialogue text.
  */
 export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, visible }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-
-  // Typewriter effect
-  useEffect(() => {
-    if (!visible || !text) {
-      setDisplayText('');
-      return;
-    }
-
-    setIsTyping(true);
-    setDisplayText('');
-    let idx = 0;
-    const interval = setInterval(() => {
-      idx++;
-      setDisplayText(text.slice(0, idx));
-      if (idx >= text.length) {
-        clearInterval(interval);
-        setIsTyping(false);
-      }
-    }, 30);
-
-    return () => clearInterval(interval);
-  }, [text, visible]);
-
   if (!visible) return null;
 
   return (
@@ -171,8 +146,7 @@ export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, 
           {speaker}
         </span>
         <span className="subtitle-text">
-          {displayText}
-          {isTyping && <span className="typing-cursor">▌</span>}
+          {text}
         </span>
       </div>
     </div>

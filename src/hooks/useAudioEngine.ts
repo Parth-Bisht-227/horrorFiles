@@ -7,6 +7,14 @@ export interface AmbientTrack {
   loop: boolean;
 }
 
+export interface DialoguePlaybackOptions {
+  /**
+   * Kept per line rather than globally so urgent performances can move faster
+   * without changing the deliberate pace of the rest of the story.
+   */
+  playbackRate?: number;
+}
+
 /**
  * Web Audio procedural engine for HorrorFiles: Case 001 — Devgarh
  * - Procedural triple-oscillator dark ambient drone (55Hz + 82.5Hz + 440Hz tremolo)
@@ -20,10 +28,47 @@ export function useAudioEngine() {
   const ambientBusRef = useRef<GainNode | null>(null);
   const ambientNodesRef = useRef<Map<string, { source: AudioBufferSourceNode | OscillatorNode; gain: GainNode }>>(new Map());
   const dialogueAudioRef = useRef<HTMLAudioElement | null>(null);
+  const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const bgmUrlRef = useRef<string | null>(null);
 
   const [isMuted, setIsMuted] = useState(false);
   const [masterVolume, setMasterVolume] = useState(0.7);
   const [isDialoguePlaying, setIsDialoguePlaying] = useState(false);
+
+  const getBgmVolume = useCallback(() => (isMuted ? 0 : masterVolume * 0.26), [isMuted, masterVolume]);
+
+  // Play a generated music bed. These files are intentionally separate from the
+  // Web Audio SFX bus: HTMLAudioElement gives the browser reliable streaming and
+  // looping for the larger MP3 files on Vercel/mobile deployments.
+  const playBgm = useCallback((url: string) => {
+    if (bgmUrlRef.current === url && bgmAudioRef.current) return;
+
+    if (bgmAudioRef.current) {
+      bgmAudioRef.current.pause();
+      bgmAudioRef.current.src = '';
+    }
+
+    const audio = new Audio(url);
+    audio.loop = true;
+    audio.preload = 'auto';
+    audio.volume = getBgmVolume();
+    bgmAudioRef.current = audio;
+    bgmUrlRef.current = url;
+    audio.play().catch((error: unknown) => {
+      // Playback can be blocked until the first tap; the next scene interaction
+      // retries through this same method without breaking the game flow.
+      console.warn('Background music could not start:', error);
+    });
+  }, [getBgmVolume]);
+
+  const stopBgm = useCallback(() => {
+    if (bgmAudioRef.current) {
+      bgmAudioRef.current.pause();
+      bgmAudioRef.current.src = '';
+      bgmAudioRef.current = null;
+    }
+    bgmUrlRef.current = null;
+  }, []);
 
   const getCtx = useCallback(() => {
     if (!audioCtxRef.current) {
@@ -115,65 +160,195 @@ export function useAudioEngine() {
     });
   }, []);
 
+  // Pre-decoded audio buffer cache for custom audio files
+  const sfxBufferCacheRef = useRef<Map<string, AudioBuffer>>(new Map());
+  const lastPaperRustleRef = useRef<number>(0);
+
+  // Helper to load and decode audio buffer
+  const getSfxBuffer = useCallback(async (key: string, urls: string[]): Promise<AudioBuffer | null> => {
+    if (sfxBufferCacheRef.current.has(key)) {
+      return sfxBufferCacheRef.current.get(key)!;
+    }
+    const { ctx } = getCtx();
+    for (const url of urls) {
+      try {
+        const resp = await fetch(url);
+        if (resp.ok) {
+          const arrayBuffer = await resp.arrayBuffer();
+          const decoded = await ctx.decodeAudioData(arrayBuffer);
+          sfxBufferCacheRef.current.set(key, decoded);
+          return decoded;
+        }
+      } catch {
+        // Fallback to next URL
+      }
+    }
+    return null;
+  }, [getCtx]);
+
+  // Preload SFX buffers on startup
+  useEffect(() => {
+    const sfxMap: Record<string, string[]> = {
+      tile: ['/audio/sfx/tile_slide.wav', '/audio/sfx/title_slide.wav'],
+      wheel: ['/audio/sfx/wheel_click.wav'],
+      paper: ['/audio/sfx/paper_slide.wav'],
+      tape_start: ['/audio/sfx/tape_start.wav'],
+      tape_stop: ['/audio/sfx/tape_stop.wav'],
+    };
+    Object.entries(sfxMap).forEach(([key, urls]) => {
+      getSfxBuffer(key, urls).catch(() => {});
+    });
+  }, [getSfxBuffer]);
+
+  // Helper to play buffer or execute procedural fallback
+  const playSfx = useCallback((key: string, urls: string[], fallback: () => void, volume = 0.5) => {
+    const { ctx, masterGain } = getCtx();
+    const cached = sfxBufferCacheRef.current.get(key);
+    if (cached) {
+      const src = ctx.createBufferSource();
+      src.buffer = cached;
+      const gain = ctx.createGain();
+      gain.gain.value = volume;
+      src.connect(gain);
+      gain.connect(masterGain);
+      src.start();
+      return;
+    }
+    // Load for subsequent calls
+    getSfxBuffer(key, urls).then(buf => {
+      if (buf) {
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const gain = ctx.createGain();
+        gain.gain.value = volume;
+        src.connect(gain);
+        gain.connect(masterGain);
+        src.start();
+      }
+    }).catch(() => {});
+    fallback();
+  }, [getCtx, getSfxBuffer]);
+
   // Tactile Stone Tile SFX for Puzzle 1
   const playTileClick = useCallback((isCorrect = false) => {
-    const { ctx, masterGain } = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = isCorrect ? 'triangle' : 'sine';
-    const startFreq = isCorrect ? 280 : 120;
-    const endFreq = isCorrect ? 340 : 60;
-
-    osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + 0.06);
-
-    gain.gain.setValueAtTime(isCorrect ? 0.09 : 0.06, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
-
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.07);
-  }, [getCtx]);
+    playSfx(
+      'tile',
+      ['/audio/sfx/tile_slide.wav', '/audio/sfx/title_slide.wav'],
+      () => {
+        const { ctx, masterGain } = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = isCorrect ? 'triangle' : 'sine';
+        const startFreq = isCorrect ? 280 : 120;
+        const endFreq = isCorrect ? 340 : 60;
+        osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + 0.06);
+        gain.gain.setValueAtTime(isCorrect ? 0.09 : 0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.07);
+      },
+      0.65
+    );
+  }, [getCtx, playSfx]);
 
   // Tactile Brass Wheel Ratchet Click for Puzzle 2
   const playWheelClick = useCallback(() => {
-    const { ctx, masterGain } = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    playSfx(
+      'wheel',
+      ['/audio/sfx/wheel_click.wav'],
+      () => {
+        const { ctx, masterGain } = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.025);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.03);
+      },
+      0.6
+    );
+  }, [getCtx, playSfx]);
 
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(1400, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.025);
-
-    gain.gain.setValueAtTime(0.04, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
-
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.03);
-  }, [getCtx]);
-
-  // Tactile Parchment / Blueprint Comparator Slide for Puzzle 3
+  // Tactile Parchment / Blueprint Comparator Slide for Puzzle 3 (throttled)
   const playPaperRustle = useCallback(() => {
-    const { ctx, masterGain } = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const now = performance.now();
+    if (now - lastPaperRustleRef.current < 90) return; // avoid flooding during fast drag
+    lastPaperRustleRef.current = now;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(220, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(160, ctx.currentTime + 0.04);
+    playSfx(
+      'paper',
+      ['/audio/sfx/paper_slide.wav'],
+      () => {
+        const { ctx, masterGain } = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(160, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.045);
+      },
+      0.5
+    );
+  }, [getCtx, playSfx]);
 
-    gain.gain.setValueAtTime(0.03, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+  // Vintage Cassette Deck Play Button Mechanical Click
+  const playTapeStart = useCallback(() => {
+    playSfx(
+      'tape_start',
+      ['/audio/sfx/tape_start.wav'],
+      () => {
+        const { ctx, masterGain } = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.09);
+      },
+      0.65
+    );
+  }, [getCtx, playSfx]);
 
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.045);
-  }, [getCtx]);
+  // Vintage Cassette Deck Stop Button Mechanical Click
+  const playTapeStop = useCallback(() => {
+    playSfx(
+      'tape_stop',
+      ['/audio/sfx/tape_stop.wav'],
+      () => {
+        const { ctx, masterGain } = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(650, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.06);
+      },
+      0.65
+    );
+  }, [getCtx, playSfx]);
 
   // Suspense stinger (puzzle solve)
   const playSolveStinger = useCallback(() => {
@@ -235,7 +410,10 @@ export function useAudioEngine() {
       ambientBusRef.current.gain.cancelScheduledValues(audioCtxRef.current.currentTime);
       ambientBusRef.current.gain.linearRampToValueAtTime(0.25, audioCtxRef.current.currentTime + 0.2);
     }
-  }, []);
+    if (bgmAudioRef.current) {
+      bgmAudioRef.current.volume = isMuted ? 0 : masterVolume * 0.08;
+    }
+  }, [isMuted, masterVolume]);
 
   // Restore ambient bus after dialogue
   const restoreAmbient = useCallback(() => {
@@ -243,10 +421,13 @@ export function useAudioEngine() {
       ambientBusRef.current.gain.cancelScheduledValues(audioCtxRef.current.currentTime);
       ambientBusRef.current.gain.linearRampToValueAtTime(1.0, audioCtxRef.current.currentTime + 0.8);
     }
-  }, []);
+    if (bgmAudioRef.current) {
+      bgmAudioRef.current.volume = isMuted ? 0 : masterVolume * 0.26;
+    }
+  }, [isMuted, masterVolume]);
 
   // Play dialogue audio file with automatic ducking
-  const playDialogue = useCallback((url: string, onEnd?: () => void): Promise<void> => {
+  const playDialogue = useCallback((url: string, onEnd?: () => void, options: DialoguePlaybackOptions = {}): Promise<void> => {
     return new Promise((resolve) => {
       if (dialogueAudioRef.current) {
         dialogueAudioRef.current.onended = null;
@@ -259,6 +440,9 @@ export function useAudioEngine() {
       const audio = new Audio(url);
       dialogueAudioRef.current = audio;
       audio.volume = isMuted ? 0 : masterVolume;
+      audio.playbackRate = options.playbackRate ?? 1;
+      audio.defaultPlaybackRate = audio.playbackRate;
+      audio.preservesPitch = true;
 
       setIsDialoguePlaying(true);
       duckAmbient();
@@ -315,9 +499,12 @@ export function useAudioEngine() {
       if (dialogueAudioRef.current) {
         dialogueAudioRef.current.volume = next ? 0 : masterVolume;
       }
+      if (bgmAudioRef.current) {
+        bgmAudioRef.current.volume = next ? 0 : masterVolume * (isDialoguePlaying ? 0.08 : 0.26);
+      }
       return next;
     });
-  }, [masterVolume]);
+  }, [masterVolume, isDialoguePlaying]);
 
   // Update master volume
   const updateVolume = useCallback((vol: number) => {
@@ -328,25 +515,33 @@ export function useAudioEngine() {
     if (dialogueAudioRef.current && !isMuted) {
       dialogueAudioRef.current.volume = vol;
     }
-  }, [isMuted]);
+    if (bgmAudioRef.current && !isMuted) {
+      bgmAudioRef.current.volume = vol * (isDialoguePlaying ? 0.08 : 0.26);
+    }
+  }, [isDialoguePlaying, isMuted]);
 
   // Cleanup
   useEffect(() => {
     return () => {
       stopAmbientDrone();
+      stopBgm();
       stopDialogue();
       if (audioCtxRef.current) {
         audioCtxRef.current.close();
       }
     };
-  }, [stopAmbientDrone, stopDialogue]);
+  }, [stopAmbientDrone, stopBgm, stopDialogue]);
 
   return {
     startAmbientDrone,
     stopAmbientDrone,
+    playBgm,
+    stopBgm,
     playTileClick,
     playWheelClick,
     playPaperRustle,
+    playTapeStart,
+    playTapeStop,
     playSolveStinger,
     playRevealStinger,
     playDialogue,

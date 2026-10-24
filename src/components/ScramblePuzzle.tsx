@@ -186,6 +186,17 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
           )}
         </p>
 
+        <div className="puzzle-workflow" aria-label="Façade reconstruction workflow">
+          <div className={`workflow-step ${!isImageReconstructed ? 'current' : 'complete'}`}>
+            <span>1</span>
+            <div><strong>Repair the photograph</strong><small>Select two tiles to swap them.</small></div>
+          </div>
+          <div className={`workflow-step ${isImageReconstructed ? 'current' : ''} ${isPropertyConfirmed ? 'complete' : ''}`}>
+            <span>2</span>
+            <div><strong>Cross-reference the archive</strong><small>Match the emblem and lattice to one estate.</small></div>
+          </div>
+        </div>
+
         <div className="puzzle-stats">
           <span className="stat-badge">Moves: {moveCount}</span>
           <button
@@ -247,6 +258,9 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
             <div
               key={tile.id}
               className={`scramble-tile ${isSelected ? 'selected' : ''} ${isCorrect && moveCount > 0 ? 'correct' : ''}`}
+              role={isImageReconstructed ? undefined : 'button'}
+              tabIndex={isImageReconstructed ? -1 : 0}
+              aria-label={`Photograph tile ${tile.id + 1}${isSelected ? ', selected' : ''}`}
               style={{
                 width: tileSize - 2,
                 height: tileSize - 2,
@@ -260,6 +274,12 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
                 cursor: isImageReconstructed ? 'default' : 'pointer',
               }}
               onClick={() => handleTileClick(tile.currentPos)}
+              onKeyDown={(event) => {
+                if (!isImageReconstructed && (event.key === 'Enter' || event.key === ' ')) {
+                  event.preventDefault();
+                  handleTileClick(tile.currentPos);
+                }
+              }}
             >
               {isSelected && <div className="tile-selected-glow" />}
               {isCorrect && moveCount > 0 && !isImageReconstructed && (
@@ -302,6 +322,15 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
                   key={prop.id}
                   className={`archive-property-card ${isSelected ? 'selected' : ''} ${isConfirmed ? 'confirmed' : ''} ${isError ? 'error' : ''}`}
                   onClick={() => handleSelectProperty(prop)}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      handleSelectProperty(prop);
+                    }
+                  }}
                   style={{
                     background: isConfirmed
                       ? 'rgba(34, 197, 94, 0.12)'

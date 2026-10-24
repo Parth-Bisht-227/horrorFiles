@@ -23,7 +23,7 @@ export const CHARACTERS: Record<string, CharacterMeta> = {
   },
   protagonist: {
     id: 'protagonist',
-    name: 'Kabir (Protagonist)',
+    name: 'Kabir',
     role: 'The Family Investigator',
     description: 'Determined to find Meera, deciphering hidden clues and architectural archives.',
     avatarUrl: '/assets/devgarh_haveli_ref.png',
@@ -47,7 +47,7 @@ export const SCENES: Record<string, SceneMeta> = {
   scene_1_recording: {
     id: 'scene_1_recording',
     title: 'Act I: The Distress Recording',
-    description: 'A damaged audio recording recovered from Meera’s phone captures her whisper, cut short by the Keeper.',
+    description: 'A damaged audio recording recovered from Meera\'s phone captures her whisper, cut short by the Keeper.',
     backgroundUrl: '/assets/opening_recording_1.png',
   },
   scene_2_scrambled_image: {
@@ -71,10 +71,11 @@ export const SCENES: Record<string, SceneMeta> = {
 };
 
 /**
- * Sample dialogue lines requested for Phase 2 validation.
- * Additional lines for the full game will be appended here.
+ * All dialogue lines — generated via Fish Audio (speech-1.6 model).
+ * Audio files live in public/audio/*.mp3
  */
 export const SAMPLE_DIALOGUE_LINES: DialogueLine[] = [
+  // ── ACT I: The Distress Recording ──────────────────────────────────────────
   {
     id: 'meera_whisper_recording',
     character: 'meera',
@@ -83,7 +84,7 @@ export const SAMPLE_DIALOGUE_LINES: DialogueLine[] = [
     sceneTitle: 'Act I: The Distress Recording',
     emotionNote: 'frightened whisper',
     deliveryTag: '[whisper]',
-    drama3Prompt: '[whispering, terrified] If anyone finds this… [gasp] please tell my family I\'m here. [pause: 0.8s] [whisper] I don\'t know where. I just…',
+    drama3Prompt: '[whispering] If anyone finds this… please tell my family I\'m here. [pause] I don\'t know where. [gasp] I just…',
     text: "If anyone finds this… please tell my family I'm here. I don't know where. I just…",
     audioFilename: 'meera_whisper_recording.mp3',
     audioUrl: '/audio/meera_whisper_recording.mp3',
@@ -94,13 +95,15 @@ export const SAMPLE_DIALOGUE_LINES: DialogueLine[] = [
     characterName: 'The Keeper',
     scene: 'scene_1_recording',
     sceneTitle: 'Act I: The Distress Recording',
-    emotionNote: 'angry, then cold',
+    emotionNote: 'explosive rage then cold menace',
     deliveryTag: '[angry, cold]',
-    drama3Prompt: '[angry, shouting] What the hell are you doing? Were you recording me? [harsh dry chuckle] That was the last mistake of your life. [cold, menacing] I\'ll kill you once I get that damn payment. [pause: 0.6s] Just fifteen more minutes…',
-    text: "What the hell are you doing? Were you recording me? That was the last mistake of your life. I'll kill you once I get that damn payment. Just fifteen more minutes…",
+    drama3Prompt: '[angry] What the hell are you doing? Were you recording me? [chuckle] That was the last mistake of your life. [cold] I\'ll kill you once I get that damn payment. [pause] Just… fifteen more minutes.',
+    text: "What the hell are you doing? Were you recording me? That was the last mistake of your life. I'll kill you once I get that damn payment. Just… fifteen more minutes.",
     audioFilename: 'keeper_discovery_threat.mp3',
     audioUrl: '/audio/keeper_discovery_threat.mp3',
   },
+
+  // ── ACT II: The Ancestral Haveli ───────────────────────────────────────────
   {
     id: 'protagonist_scrambled_image',
     character: 'protagonist',
@@ -109,16 +112,85 @@ export const SAMPLE_DIALOGUE_LINES: DialogueLine[] = [
     sceneTitle: 'Act II: The Ancestral Haveli',
     emotionNote: 'focused self-talk',
     deliveryTag: '[focused]',
-    drama3Prompt: '[sigh, quiet self-talk] The image is a mess. [pause: 0.6s] [focused, determined] If I can put it back together, maybe I\'ll recognize the place.',
-    text: "The image is a mess. If I can put it back together, maybe I'll recognize the place.",
+    drama3Prompt: '[quiet] The image is a mess. [pause] If I can put it back together… maybe I\'ll recognize the place.',
+    text: "The image is a mess. If I can put it back together… maybe I'll recognize the place.",
     audioFilename: 'protagonist_scrambled_image.mp3',
     audioUrl: '/audio/protagonist_scrambled_image.mp3',
+  },
+  {
+    id: 'kabir_archive_match',
+    character: 'protagonist',
+    characterName: 'Kabir',
+    scene: 'scene_2_scrambled_image',
+    sceneTitle: 'Act II: The Ancestral Haveli',
+    emotionNote: 'quiet realization',
+    deliveryTag: '[focused]',
+    drama3Prompt: '[focused] The three-leaf emblem. The carved lattice above the arch. [pause] That\'s Devgarh Haveli. The family estate. [breath] She\'s there.',
+    text: "The three-leaf emblem. The carved lattice above the arch. That's Devgarh Haveli. The family estate. She's there.",
+    audioFilename: 'kabir_archive_match.mp3',
+    audioUrl: '/audio/kabir_archive_match.mp3',
+  },
+
+  // ── ACT III: The Caesar Cipher ─────────────────────────────────────────────
+  {
+    id: 'kabir_cipher_clue',
+    character: 'protagonist',
+    characterName: 'Kabir',
+    scene: 'scene_3_coded_note',
+    sceneTitle: 'Act III: The Caesar Cipher',
+    emotionNote: 'reading then deducing',
+    deliveryTag: '[focused]',
+    drama3Prompt: '[reading] Three leaves. Three steps back. [pause] A Caesar shift. Shift back three. [quiet] North Gallery. The old plan is behind a loose panel.',
+    text: "Three leaves. Three steps back. A Caesar shift — shift back three. North Gallery. The old plan is behind a loose panel.",
+    audioFilename: 'kabir_cipher_clue.mp3',
+    audioUrl: '/audio/kabir_cipher_clue.mp3',
+  },
+
+  // ── ACT IV: The Concealed Chamber ─────────────────────────────────────────
+  {
+    id: 'kabir_blueprint_find',
+    character: 'protagonist',
+    characterName: 'Kabir',
+    scene: 'scene_4_concealed_chamber',
+    sceneTitle: 'Act IV: The Concealed Chamber',
+    emotionNote: 'low deliberate urgency',
+    deliveryTag: '[focused]',
+    drama3Prompt: '[low] The restoration plan cuts off here. [pause] But the original… the original shows a chamber. [urgent] Behind the western wall. They walled it off.',
+    text: "The restoration plan cuts off here. But the original… the original shows a chamber. Behind the western wall. They walled it off.",
+    audioFilename: 'kabir_blueprint_find.mp3',
+    audioUrl: '/audio/kabir_blueprint_find.mp3',
+  },
+
+  // ── ENDING ─────────────────────────────────────────────────────────────────
+  {
+    id: 'narrator_ending',
+    character: 'narrator',
+    characterName: 'Narrator',
+    scene: 'scene_4_concealed_chamber',
+    sceneTitle: 'Ending: The Unconfirmed Conspiracy',
+    emotionNote: 'calm eerie documentary',
+    deliveryTag: '[calm, eerie]',
+    drama3Prompt: '[calm] Meera was recovered alive from the concealed chamber beneath Devgarh Haveli\'s north gallery. [pause] The Keeper disappeared into the estate grounds before police arrived. [pause] The messages found on his discarded phone suggest he was acting on instructions. [eerie] Whoever gave those instructions… knew the haveli\'s secrets as well as the family did.',
+    text: "Meera was recovered alive from the concealed chamber beneath Devgarh Haveli's north gallery. The Keeper disappeared before police arrived. The messages on his discarded phone suggest he was acting on instructions. Whoever gave those instructions… knew the haveli's secrets as well as the family did.",
+    audioFilename: 'narrator_ending.mp3',
+    audioUrl: '/audio/narrator_ending.mp3',
   },
 ];
 
 /**
+ * BGM track manifest — files generated by scripts/generate_audio.py
+ * Loaded by useAudioEngine for scene-specific ambient tracks.
+ */
+export const BGM_TRACKS: Record<string, string> = {
+  title:          '/audio/bgm/title_drone.mp3',
+  act1_recording: '/audio/bgm/act1_recording.mp3',
+  act2_haveli:    '/audio/bgm/act2_haveli.mp3',
+  act3_cipher:    '/audio/bgm/act3_cipher.mp3',
+  act4_blueprint: '/audio/bgm/act4_blueprint.mp3',
+  climax:         '/audio/bgm/climax.mp3',
+};
+
+/**
  * All dialogue lines currently registered.
  */
-export const ALL_DIALOGUE_LINES: DialogueLine[] = [
-  ...SAMPLE_DIALOGUE_LINES,
-];
+export const ALL_DIALOGUE_LINES: DialogueLine[] = [...SAMPLE_DIALOGUE_LINES];
