@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-10-24T08:49:28.703Z",
+  "modelUsed": "s2.1-pro-free",
+  "characters": {
+    "meera": {
+      "name": "Meera",
+      "voiceId": "7d62e110d5364b608912d6837890b336"
+    },
+    "keeper": {
+      "name": "The Keeper",
+      "voiceId": "8cf2f4372b884ce4bf4271648067eaab"
+    },
+    "protagonist": {
+      "name": "Kabir",
+      "voiceId": "b49fbb232991427ea7196162045169b3"
+    },
+    "narrator": {
+      "name": "Narrator",
+      "voiceId": "8f01a73eba7947219fd7eb789885deaf"
+    }
+  },
+  "dialogues": {
+    "meera_whisper_recording": {
+      "id": "meera_whisper_recording",
+      "character": "meera",
+      "characterName": "Meera",
+      "scene": "scene_1_recording",
+      "text": "If anyone finds this… please tell my family I'm here. I don't know where. I just…",
+      "deliveryTag": "[whisper]",
+      "emotionNote": "frightened whisper",
+      "voiceId": "7d62e110d5364b608912d6837890b336",
+      "audioFilename": "meera_whisper_recording.mp3",
+      "audioUrl": "/audio/meera_whisper_recording.mp3",
+      "fileSizeBytes": 78157,
+      "status": "ready",
+      "model": "s2.1-pro-free",
+      "generatedAt": "2026-10-24T08:49:19.004Z"
+    },
+    "keeper_discovery_threat": {
+      "id": "keeper_discovery_threat",
+      "character": "keeper",
+      "characterName": "The Keeper",
+      "scene": "scene_1_recording",
+      "text": "What the hell are you doing? Were you recording me? That was the last mistake of your life. I'll kill you once I get that damn payment. Just fifteen more minutes…",
+      "deliveryTag": "[angry, cold]",
+      "emotionNote": "angry, then cold",
+      "voiceId": "8cf2f4372b884ce4bf4271648067eaab",
+      "audioFilename": "keeper_discovery_threat.mp3",
+      "audioUrl": "/audio/keeper_discovery_threat.mp3",
+      "fileSizeBytes": 191424,
+      "status": "ready",
+      "model": "s2.1-pro-free",
+      "generatedAt": "2026-10-24T08:49:24.815Z"
+    },
+    "protagonist_scrambled_image": {
+      "id": "protagonist_scrambled_image",
+      "character": "protagonist",
+      "characterName": "Kabir",
+      "scene": "scene_2_scrambled_image",
+      "text": "The image is a mess. If I can put it back together, maybe I'll recognize the place.",
+      "deliveryTag": "[focused]",
+      "emotionNote": "focused self-talk",
+      "voiceId": "b49fbb232991427ea7196162045169b3",
+      "audioFilename": "protagonist_scrambled_image.mp3",
+      "audioUrl": "/audio/protagonist_scrambled_image.mp3",
+      "fileSizeBytes": 76067,
+      "status": "ready",
+      "model": "s2.1-pro-free",
+      "generatedAt": "2026-10-24T08:49:28.104Z"
+    }
+  }
+}

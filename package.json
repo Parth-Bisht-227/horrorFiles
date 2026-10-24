@@ -1,0 +1,31 @@
+{
+  "name": "the-last-purnima",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "generate:audio": "node scripts/generate-audio.mjs",
+    "generate:audio:samples": "node scripts/generate-audio.mjs --sample-only",
+    "generate:audio:mock": "node scripts/generate-audio.mjs --sample-only --mock",
+    "test:drama3": "node scripts/generate-audio.mjs --test-drama3",
+    "test:drama3:force": "node scripts/generate-audio.mjs --test-drama3 --force",
+    "generate:takes": "node scripts/generate-takes.mjs"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.88.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.4"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-10-24T09:02:37.163Z",
+  "modelUsed": "drama-3",
+  "characters": {
+    "meera": {
+      "name": "Meera",
+      "voiceId": "7d62e110d5364b608912d6837890b336"
+    },
+    "keeper": {
+      "name": "The Keeper",
+      "voiceId": "8cf2f4372b884ce4bf4271648067eaab"
+    },
+    "protagonist": {
+      "name": "Kabir",
+      "voiceId": "b49fbb232991427ea7196162045169b3"
+    },
+    "narrator": {
+      "name": "Narrator",
+      "voiceId": "8f01a73eba7947219fd7eb789885deaf"
+    }
+  },
+  "dialogues": {
+    "meera_whisper_recording": {
+      "id": "meera_whisper_recording",
+      "character": "meera",
+      "characterName": "Meera",
+      "scene": "scene_1_recording",
+      "text": "If anyone finds this… please tell my family I'm here. I don't know where. I just…",
+      "deliveryTag": "[whisper]",
+      "drama3Prompt": "[whispering, terrified] If anyone finds this… [gasp] please tell my family I'm here. [pause: 0.8s] [whisper] I don't know where. I just…",
+      "promptSentToAPI": "[whispering, terrified] If anyone finds this… [gasp] please tell my family I'm here. [pause: 0.8s] [whisper] I don't know where. I just…",
+      "emotionNote": "frightened whisper",
+      "voiceId": "7d62e110d5364b608912d6837890b336",
+      "audioFilename": "meera_whisper_recording_drama3.mp3",
+      "audioUrl": "/audio/drama3-comparison/meera_whisper_recording_drama3.mp3",
+      "fileSizeBytes": 127476,
+      "status": "ready",
+      "model": "drama-3",
+      "latencyMs": 1595,
+      "generatedAt": "2026-10-24T09:02:31.920Z"
+    },
+    "keeper_discovery_threat": {
+      "id": "keeper_discovery_threat",
+      "character": "keeper",
+      "characterName": "The Keeper",
+      "scene": "scene_1_recording",
+      "text": "What the hell are you doing? Were you recording me? That was the last mistake of your life. I'll kill you once I get that damn payment. Just fifteen more minutes…",
+      "deliveryTag": "[angry, cold]",
+      "drama3Prompt": "[angry, shouting] What the hell are you doing? Were you recording me? [harsh dry chuckle] That was the last mistake of your life. [cold, menacing] I'll kill you once I get that damn payment. [pause: 0.6s] Just fifteen more minutes…",
+      "promptSentToAPI": "[angry, shouting] What the hell are you doing? Were you recording me? [harsh dry chuckle] That was the last mistake of your life. [cold, menacing] I'll kill you once I get that damn payment. [pause: 0.6s] Just fifteen more minutes…",
+      "emotionNote": "angry, then cold",
+      "voiceId": "8cf2f4372b884ce4bf4271648067eaab",
+      "audioFilename": "keeper_discovery_threat_drama3.mp3",
+      "audioUrl": "/audio/drama3-comparison/keeper_discovery_threat_drama3.mp3",
+      "fileSizeBytes": 374908,
+      "status": "ready",
+      "model": "drama-3",
+      "latencyMs": 2730,
+      "generatedAt": "2026-10-24T09:02:35.230Z"
+    },
+    "protagonist_scrambled_image": {
+      "id": "protagonist_scrambled_image",
+      "character": "protagonist",
+      "characterName": "Kabir",
+      "scene": "scene_2_scrambled_image",
+      "text": "The image is a mess. If I can put it back together, maybe I'll recognize the place.",
+      "deliveryTag": "[focused]",
+      "drama3Prompt": "[sigh, quiet self-talk] The image is a mess. [pause: 0.6s] [focused, determined] If I can put it back together, maybe I'll recognize the place.",
+      "promptSentToAPI": "[sigh, quiet self-talk] The image is a mess. [pause: 0.6s] [focused, determined] If I can put it back together, maybe I'll recognize the place.",
+      "emotionNote": "focused self-talk",
+      "voiceId": "b49fbb232991427ea7196162045169b3",
+      "audioFilename": "protagonist_scrambled_image_drama3.mp3",
+      "audioUrl": "/audio/drama3-comparison/protagonist_scrambled_image_drama3.mp3",
+      "fileSizeBytes": 122879,
+      "status": "ready",
+      "model": "drama-3",
+      "latencyMs": 1549,
+      "generatedAt": "2026-10-24T09:02:37.163Z"
+    }
+  }
+}

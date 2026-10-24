@@ -1,0 +1,43 @@
+{
+  "dialogues": [
+    {
+      "id": "meera_whisper_recording",
+      "character": "meera",
+      "characterName": "Meera",
+      "scene": "scene_1_recording",
+      "sceneTitle": "Act I: The Distress Recording",
+      "emotionNote": "frightened whisper",
+      "deliveryTag": "[whisper]",
+      "drama3Prompt": "[whispering, terrified] If anyone finds this… [gasp] please tell my family I'm here. [pause: 0.8s] [whisper] I don't know where. I just…",
+      "text": "If anyone finds this… please tell my family I'm here. I don't know where. I just…",
+      "audioFilename": "meera_whisper_recording.mp3",
+      "audioUrl": "/audio/meera_whisper_recording.mp3"
+    },
+    {
+      "id": "keeper_discovery_threat",
+      "character": "keeper",
+      "characterName": "The Keeper",
+      "scene": "scene_1_recording",
+      "sceneTitle": "Act I: The Distress Recording",
+      "emotionNote": "angry, then cold",
+      "deliveryTag": "[angry, cold]",
+      "drama3Prompt": "[angry, shouting] What the hell are you doing? Were you recording me? [harsh dry chuckle] That was the last mistake of your life. [cold, menacing] I'll kill you once I get that damn payment. [pause: 0.6s] Just fifteen more minutes…",
+      "text": "What the hell are you doing? Were you recording me? That was the last mistake of your life. I'll kill you once I get that damn payment. Just fifteen more minutes…",
+      "audioFilename": "keeper_discovery_threat.mp3",
+      "audioUrl": "/audio/keeper_discovery_threat.mp3"
+    },
+    {
+      "id": "protagonist_scrambled_image",
+      "character": "protagonist",
+      "characterName": "Kabir",
+      "scene": "scene_2_scrambled_image",
+      "sceneTitle": "Act II: The Ancestral Haveli",
+      "emotionNote": "focused self-talk",
+      "deliveryTag": "[focused]",
+      "drama3Prompt": "[sigh, quiet self-talk] The image is a mess. [pause: 0.6s] [focused, determined] If I can put it back together, maybe I'll recognize the place.",
+      "text": "The image is a mess. If I can put it back together, maybe I'll recognize the place.",
+      "audioFilename": "protagonist_scrambled_image.mp3",
+      "audioUrl": "/audio/protagonist_scrambled_image.mp3"
+    }
+  ]
+}
