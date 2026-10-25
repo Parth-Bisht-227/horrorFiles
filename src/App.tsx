@@ -264,6 +264,12 @@ export const App: React.FC = () => {
     setCaseActive(true);
   }, [handleFirstInteraction]);
 
+  const skipVoiceover = useCallback(() => {
+    audio.playTapeStop();
+    audio.stopDialogue();
+    game.hideSubtitle();
+  }, [audio, game]);
+
   // Act banner display
   const showActIntro = useCallback((title: string, subtitle: string, duration = 2800) => {
     setActBannerText(title);
@@ -656,6 +662,8 @@ export const App: React.FC = () => {
         text={state.currentSubtitle}
         color={state.subtitleColor}
         visible={state.showSubtitle}
+        isPlaying={audio.isDialoguePlaying}
+        onSkip={skipVoiceover}
       />
 
       {/* HUD Bar */}

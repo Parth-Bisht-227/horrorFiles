@@ -131,12 +131,14 @@ interface SubtitleBarProps {
   text: string;
   color: string;
   visible: boolean;
+  isPlaying?: boolean;
+  onSkip?: () => void;
 }
 
 /**
  * Cinematic subtitle bar — appears at bottom with speaker name and dialogue text.
  */
-export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, visible }) => {
+export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, visible, isPlaying = false, onSkip }) => {
   if (!visible) return null;
 
   return (
@@ -148,6 +150,11 @@ export const SubtitleBar: React.FC<SubtitleBarProps> = ({ speaker, text, color, 
         <span className="subtitle-text">
           {text}
         </span>
+        {isPlaying && onSkip && (
+          <button className="subtitle-skip-btn" onClick={onSkip} aria-label="Skip current voiceover">
+            Skip voiceover <span aria-hidden="true">›</span>
+          </button>
+        )}
       </div>
     </div>
   );

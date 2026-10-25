@@ -28,6 +28,7 @@ export function useAudioEngine() {
   const ambientBusRef = useRef<GainNode | null>(null);
   const ambientNodesRef = useRef<Map<string, { source: AudioBufferSourceNode | OscillatorNode; gain: GainNode }>>(new Map());
   const dialogueAudioRef = useRef<HTMLAudioElement | null>(null);
+  const dialogueResolveRef = useRef<(() => void) | null>(null);
   const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
   const bgmUrlRef = useRef<string | null>(null);
 
@@ -434,6 +435,8 @@ export function useAudioEngine() {
   const playDialogue = useCallback((url: string, onEnd?: () => void, options: DialoguePlaybackOptions = {}): Promise<void> => {
     return new Promise((resolve) => {
       if (dialogueAudioRef.current) {
+        dialogueResolveRef.current?.();
+        dialogueResolveRef.current = null;
         dialogueAudioRef.current.onended = null;
         dialogueAudioRef.current.onerror = null;
         dialogueAudioRef.current.pause();
@@ -443,6 +446,7 @@ export function useAudioEngine() {
 
       const audio = new Audio(url);
       dialogueAudioRef.current = audio;
+      dialogueResolveRef.current = resolve;
       audio.volume = isMuted ? 0 : masterVolume;
       audio.playbackRate = options.playbackRate ?? 1;
       audio.defaultPlaybackRate = audio.playbackRate;
@@ -455,6 +459,7 @@ export function useAudioEngine() {
         setIsDialoguePlaying(false);
         restoreAmbient();
         dialogueAudioRef.current = null;
+        dialogueResolveRef.current = null;
         onEnd?.();
         resolve();
       };
@@ -464,6 +469,7 @@ export function useAudioEngine() {
         restoreAmbient();
         console.warn('Dialogue audio failed to load:', url);
         dialogueAudioRef.current = null;
+        dialogueResolveRef.current = null;
         resolve();
       };
 
@@ -475,6 +481,7 @@ export function useAudioEngine() {
           }
           setIsDialoguePlaying(false);
           restoreAmbient();
+          dialogueResolveRef.current = null;
           resolve();
         });
       }
@@ -483,6 +490,8 @@ export function useAudioEngine() {
 
   const stopDialogue = useCallback(() => {
     if (dialogueAudioRef.current) {
+      dialogueResolveRef.current?.();
+      dialogueResolveRef.current = null;
       dialogueAudioRef.current.onended = null;
       dialogueAudioRef.current.onerror = null;
       dialogueAudioRef.current.pause();

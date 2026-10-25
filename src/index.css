@@ -607,6 +607,25 @@ html, body {
   letter-spacing: 0.4px;
 }
 
+.subtitle-skip-btn {
+  align-self: flex-end;
+  margin-top: 3px;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color var(--transition-fast);
+}
+
+.subtitle-skip-btn:hover,
+.subtitle-skip-btn:focus-visible {
+  color: var(--gold-300);
+}
+
 .typing-cursor {
   display: inline-block;
   margin-left: 4px;
