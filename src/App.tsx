@@ -390,7 +390,6 @@ export const App: React.FC = () => {
       <ScramblePuzzle
         imageUrl="/assets/devgarh_haveli_ref.png"
         onTileClick={audio.playTileClick}
-        onArchiveSelect={audio.playArchiveSelect}
         onSolve={async () => {
           audio.playSolveStinger();
           game.completePuzzle('scramble');

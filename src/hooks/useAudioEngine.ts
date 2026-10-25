@@ -351,23 +351,6 @@ export function useAudioEngine() {
     );
   }, [getCtx, playSfx]);
 
-  // Soft document-stamp confirmation for archive choices. This deliberately
-  // differs from the tactile stone-tile click used while repairing the photo.
-  const playArchiveSelect = useCallback((isCorrect = false) => {
-    const { ctx, masterGain } = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(isCorrect ? 310 : 185, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(isCorrect ? 235 : 135, ctx.currentTime + 0.14);
-    gain.gain.setValueAtTime(isCorrect ? 0.055 : 0.035, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.16);
-  }, [getCtx]);
-
   // Low archival confirmation instead of a bright game-like "ding".
   const playSolveStinger = useCallback(() => {
     const { ctx, masterGain } = getCtx();
@@ -555,7 +538,6 @@ export function useAudioEngine() {
     playPaperRustle,
     playTapeStart,
     playTapeStop,
-    playArchiveSelect,
     playSolveStinger,
     playRevealStinger,
     playDialogue,
