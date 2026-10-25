@@ -231,7 +231,7 @@ export const NarrativeText: React.FC<NarrativeTextProps> = ({
       )}
 
       {!isAllVisible && (
-        <span className="narrative-tap-hint">Click to reveal faster •••</span>
+        <span className="narrative-tap-hint">Click to reveal more information •••</span>
       )}
     </div>
   );

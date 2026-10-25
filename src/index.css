@@ -275,41 +275,59 @@ html, body {
 }
 
 .game-title {
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: clamp(0.35rem, 1vw, 0.8rem);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   width: 100%;
-  font-family: var(--font-serif);
-  font-weight: 900;
-  line-height: 0.94;
-  margin: 0 0 16px;
-  white-space: nowrap;
+  margin: 0 0 14px;
 }
 
-.game-title-horror,
-.game-title-files {
-  font-size: clamp(2.5rem, 5.25vw, 4.55rem);
-  letter-spacing: clamp(0.04em, 0.34vw, 0.09em);
+.game-title-word {
+  font-family: 'Cormorant SC', var(--font-serif);
+  font-size: clamp(2.7rem, 6vw, 5rem);
+  font-weight: 700;
+  letter-spacing: clamp(0.12em, 0.75vw, 0.28em);
+  line-height: 0.78;
+  padding-left: 0.12em;
 }
 
 .game-title-horror {
-  color: #f8fafc;
-  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  text-shadow: 0 3px 22px rgba(255, 255, 255, 0.1);
 }
 
-.game-title-slash {
+.game-title-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 345px);
+  height: 12px;
   color: var(--crimson-500);
   font-family: var(--font-sans);
-  font-size: clamp(1.3rem, 3vw, 2.15rem);
-  font-weight: 300;
-  letter-spacing: -0.16em;
-  text-shadow: 0 0 20px var(--crimson-glow);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+}
+
+.game-title-rule::before,
+.game-title-rule::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.8));
+}
+
+.game-title-rule::after {
+  transform: scaleX(-1);
+}
+
+.game-title-rule i::before {
+  content: '001';
+  font-style: normal;
 }
 
 .game-title-files {
   color: var(--gold-300);
-  text-shadow: 0 0 30px var(--gold-glow);
+  text-shadow: 0 0 22px var(--gold-glow);
 }
 
 .game-case-subtitle {
@@ -1734,14 +1752,11 @@ html, body {
     padding: 32px 20px;
   }
   .game-title {
-    gap: 0.3rem;
+    gap: 7px;
   }
-  .game-title-horror,
-  .game-title-files {
-    font-size: clamp(2rem, 12vw, 3rem);
-  }
-  .game-title-slash {
-    font-size: 1.25rem;
+  .game-title-word {
+    font-size: clamp(2.5rem, 14vw, 3.4rem);
+    letter-spacing: 0.16em;
   }
   .game-case-subtitle {
     font-size: 0.65rem;

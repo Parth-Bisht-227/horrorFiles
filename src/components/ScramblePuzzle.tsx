@@ -5,6 +5,7 @@ interface ScramblePuzzleProps {
   onSolve: () => void;
   gridSize?: number;
   onTileClick?: (isCorrect?: boolean) => void;
+  onArchiveSelect?: (isCorrect?: boolean) => void;
 }
 
 interface Tile {
@@ -82,6 +83,7 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
   onSolve,
   gridSize = 3,
   onTileClick,
+  onArchiveSelect,
 }) => {
   const totalTiles = gridSize * gridSize;
   const [tiles, setTiles] = useState<Tile[]>(() => createInitialTiles(totalTiles));
@@ -162,11 +164,11 @@ export const ScramblePuzzle: React.FC<ScramblePuzzleProps> = ({
     if (property.isCorrect) {
       setArchiveFeedback(null);
       setIsPropertyConfirmed(true);
-      onTileClick?.(true);
+      onArchiveSelect?.(true);
     } else {
       setIsPropertyConfirmed(false);
       setArchiveFeedback(property.discrepancyNote || 'This property features different architectural motifs.');
-      onTileClick?.(false);
+      onArchiveSelect?.(false);
     }
   };
 

@@ -305,9 +305,9 @@ export const App: React.FC = () => {
       <div className="title-screen" onClick={handleFirstInteraction}>
         <p className="title-file-label">RECOVERED CASE FILE / 001</p>
         <h1 className="game-title" aria-label="Horror Files">
-          <span className="game-title-horror">HORROR</span>
-          <span className="game-title-slash">//</span>
-          <span className="game-title-files">FILES</span>
+          <span className="game-title-word game-title-horror">HORROR</span>
+          <span className="game-title-rule" aria-hidden="true"><i /></span>
+          <span className="game-title-word game-title-files">FILES</span>
         </h1>
         <p className="game-case-subtitle">THE MISSING SIGNAL</p>
         <div className="title-divider" />
@@ -384,6 +384,7 @@ export const App: React.FC = () => {
       <ScramblePuzzle
         imageUrl="/assets/devgarh_haveli_ref.png"
         onTileClick={audio.playTileClick}
+        onArchiveSelect={audio.playArchiveSelect}
         onSolve={async () => {
           audio.playSolveStinger();
           game.completePuzzle('scramble');

@@ -350,25 +350,41 @@ export function useAudioEngine() {
     );
   }, [getCtx, playSfx]);
 
-  // Suspense stinger (puzzle solve)
+  // Soft document-stamp confirmation for archive choices. This deliberately
+  // differs from the tactile stone-tile click used while repairing the photo.
+  const playArchiveSelect = useCallback((isCorrect = false) => {
+    const { ctx, masterGain } = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(isCorrect ? 310 : 185, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(isCorrect ? 235 : 135, ctx.currentTime + 0.14);
+    gain.gain.setValueAtTime(isCorrect ? 0.055 : 0.035, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.16);
+  }, [getCtx]);
+
+  // Low archival confirmation instead of a bright game-like "ding".
   const playSolveStinger = useCallback(() => {
     const { ctx, masterGain } = getCtx();
 
     const osc = ctx.createOscillator();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(220, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
-    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(108, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(67, ctx.currentTime + 0.55);
 
     const stingerGain = ctx.createGain();
     stingerGain.gain.setValueAtTime(0, ctx.currentTime);
-    stingerGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
-    stingerGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+    stingerGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.025);
+    stingerGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
 
     osc.connect(stingerGain);
     stingerGain.connect(masterGain);
     osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 1.5);
+    osc.stop(ctx.currentTime + 0.7);
   }, [getCtx]);
 
   // Dramatic reveal stinger
@@ -390,18 +406,6 @@ export function useAudioEngine() {
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 2);
 
-    // High shimmer
-    const shimmer = ctx.createOscillator();
-    shimmer.type = 'sine';
-    shimmer.frequency.value = 1200;
-    const shimmerGain = ctx.createGain();
-    shimmerGain.gain.setValueAtTime(0, ctx.currentTime);
-    shimmerGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.3);
-    shimmerGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
-    shimmer.connect(shimmerGain);
-    shimmerGain.connect(masterGain);
-    shimmer.start(ctx.currentTime);
-    shimmer.stop(ctx.currentTime + 2.5);
   }, [getCtx]);
 
   // Duck ambient bus during dialogue
@@ -542,6 +546,7 @@ export function useAudioEngine() {
     playPaperRustle,
     playTapeStart,
     playTapeStop,
+    playArchiveSelect,
     playSolveStinger,
     playRevealStinger,
     playDialogue,
